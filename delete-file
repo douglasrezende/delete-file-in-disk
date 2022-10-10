@@ -1,0 +1,39 @@
+import com.sterlingcommerce.woodstock.workflow.Document;   
+import java.io.File;    
+import java.io.FileNotFoundException;    
+import java.io.FileReader;    
+import java.io.IOException;    
+import java.util.Calendar;    
+import java.util.Date;    
+File file = null;    
+String[] files = null;    
+Date fileToDelete = null;    
+String path = (String)wfc.getWFContent("directory");    
+String strNumberOfDays = (String)wfc.getWFContent("numberOfDays");
+String logName = (String)wfc.getWFContent("logName");    
+int numberOfDays = Integer.parseInt(strNumberOfDays);    
+Date date = new Date();    
+Calendar c = Calendar.getInstance();    
+c.setTime(date);   
+c.add(Calendar.DATE, -numberOfDays);    
+date = c.getTime();    
+try{         
+ File folder = new File(path);         
+ files = folder.list();         
+ if (folder.isDirectory()){                   
+    File[] listFiles = folder.listFiles();                
+    for (int i = 0; i < listFiles.length; ++i) {                              
+      String name = files[i];         
+      if (name.contains(logName)){         
+         file = new File(folder.getPath(), name);                         
+         fileToDelete = new Date(file.lastModified());                         
+         if (fileToDelete.before(date)) {                                  
+            file.delete();                         
+        }                 
+      } 
+    }         
+ }  
+}catch(Exception ex){            
+  log.log("File Not Exist!"+ ex.getMessage());    
+}    
+return "000";
